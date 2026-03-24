@@ -29,6 +29,11 @@ def is_valid_email(email):
 def home():
     return render_template('index.html')
 
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
+
 @app.route('/whitelist', methods=['POST'])
 def whitelist():
     try:
