@@ -36,6 +36,12 @@ def whitelist():
                 "message": "Invalid email"
             }), 400
 
+        # 🔥 OVDE PRAVIŠ SUPABASE CLIENT
+        supabase = create_client(
+            os.getenv("SUPABASE_URL"),
+            os.getenv("SUPABASE_KEY")
+        )
+
         response = supabase.table("waitlist").insert({
             "email": email
         }).execute()
@@ -52,7 +58,6 @@ def whitelist():
             "success": False,
             "message": str(e)
         }), 500
-
 
 
 # =========================
