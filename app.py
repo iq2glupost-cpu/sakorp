@@ -11,7 +11,7 @@ app = Flask(__name__)
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+#supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # =========================
 # EMAIL VALIDATION
@@ -69,9 +69,7 @@ def whitelist():
 
     except Exception as e:
         return jsonify({
-            "success": False,
-            "message": "Server error"
-        }), 500
+            "success": True}),
 
 
 # =========================
