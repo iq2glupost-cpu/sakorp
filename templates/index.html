@@ -509,9 +509,10 @@
         <a class="btn ghost" href="#workflow">Workflow</a>
         <a class="btn ghost" href="#pricing">Pricing</a>
 
-        <a class="btn secondary" id="navLogin" href="/login">Login</a>
-        <a class="btn primary" id="navRegister" href="/register">Create account</a>
-        <a class="btn primary" id="navDashboard" href="/dashboard" style="display:none;">Open dashboard</a>
+        <a class="btn secondary" id="navLogin" href="#" onclick="openWhitelist('nav'); return false;">Login</a>
+        <a class="btn primary" id="navRegister" href="#" onclick="openWhitelist('nav'); return false;">Create account</a>
+        <a class="btn primary" id="navDashboard" href="#" onclick="openWhitelist('nav'); return false;" style="display:none;">Open dashboard</a>
+
       </div>
     </div>
   </div>
@@ -625,7 +626,7 @@
 
       <div class="card-grid">
         <!-- STANDARD PLAN -->
-        <a class="pCard reveal" style="transition-delay:.08s;" href="/login" aria-label="Standard plan — login">
+        <a class="pCard reveal" style="transition-delay:.08s;" href="#" onclick="openWhitelist('pricing'); return false;" aria-label="Standard plan — login">
           <div class="tag"><span class="dot cyan"></span> Standard plan</div>
           <div class="pTitle">Standard — $49.99 / month</div>
           <div class="pSub">
@@ -651,7 +652,7 @@
         </a>
 
         <!-- STANDARD ASIN ADD-ON -->
-        <a class="pCard reveal" style="transition-delay:.12s;" href="/login" aria-label="Standard ASIN add-on — login">
+        <a class="pCard reveal" style="transition-delay:.12s;" href="#" onclick="openWhitelist('pricing'); return false;" aria-label="Standard ASIN add-on — login">
           <div class="tag"><span class="dot"></span> Add-on</div>
           <div class="pTitle">Standard ASIN — $19.99 / ASIN / month</div>
           <div class="pSub">
@@ -671,7 +672,7 @@
         </a>
 
         <!-- PROTECTED ASIN ADD-ON (replace your current Protected card with this) -->
-        <a class="pCard reveal" style="transition-delay:.16s;" href="/login" aria-label="Protected ASIN add-on — login">
+        <a class="pCard reveal" style="transition-delay:.16s;" href="#" onclick="openWhitelist('pricing'); return false;" aria-label="Protected ASIN add-on — login">
           <div class="tag"><span class="dot green"></span> High priority</div>
 
           <div class="pTitle">Protected ASIN — $39.99 / ASIN / month</div>
@@ -738,8 +739,8 @@
             <a href="#platform">Platform</a>
             <a href="#workflow">Workflow</a>
             <a href="#pricing">Pricing</a>
-            <a href="/login">Login</a>
-            <a href="/register">Create account</a>
+            <a href="#" onclick="openWhitelist('footer'); return false;">Login</a>
+            <a href="#" onclick="openWhitelist('footer'); return false;">Create account</a>
             <a href="/terms">Terms</a>
           </div>
         </div>
@@ -780,6 +781,103 @@
     if(reg) reg.style.display = 'none';
     if(dash) dash.style.display = 'inline-flex';
   })();
+
+    let wlSource = "unknown";
+
+  function openWhitelist(source){
+    wlSource = source;
+    document.getElementById("whitelistModal").style.display = "flex";
+  }
+
+  window.addEventListener("click", function(e){
+    if(e.target.id === "whitelistModal"){
+      document.getElementById("whitelistModal").style.display = "none";
+    }
+  });
+
+  async function submitWhitelist(){
+    const email = document.getElementById("wlEmail").value;
+
+    const error = document.getElementById("wlError");
+    const success = document.getElementById("wlSuccess");
+
+    error.style.display = "none";
+    success.style.display = "none";
+
+    try{
+      const res = await fetch("/whitelist", {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({
+          email: email,
+          source: wlSource
+        })
+      });
+
+      const data = await res.json();
+
+      if(data.success){
+        success.style.display = "block";
+      }else{
+        error.innerText = data.message;
+        error.style.display = "block";
+      }
+
+    }catch(e){
+      error.innerText = "Server error";
+      error.style.display = "block";
+    }
+  }
 </script>
+
+<div id="whitelistModal" style="
+position:fixed; inset:0;
+background:rgba(0,0,0,.6);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+">
+
+  <div style="
+    background:#fff;
+    padding:28px;
+    border-radius:18px;
+    width:min(420px,90%);
+    text-align:center;
+  ">
+
+    <h2 style="margin:0 0 10px;font-weight:900;">Request Early Access</h2>
+
+    <p style="color:#5f6368;font-size:14px;">
+      Private beta. Limited onboarding.
+    </p>
+
+    <input id="wlEmail" type="email" placeholder="Enter your email"
+      style="width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #ddd;" />
+
+    <button onclick="submitWhitelist()" style="
+      width:100%;
+      margin-top:12px;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      background:#0071e3;
+      color:#fff;
+      font-weight:800;
+      cursor:pointer;
+    ">
+      Join whitelist
+    </button>
+
+    <div id="wlSuccess" style="display:none;color:#22c55e;margin-top:10px;">
+      You’re on the list.
+    </div>
+
+    <div id="wlError" style="display:none;color:#ef4444;margin-top:10px;"></div>
+
+  </div>
+</div>
+
 </body>
 </html>
