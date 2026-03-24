@@ -11,6 +11,9 @@ app = Flask(__name__, template_folder='../templates')
 url = os.environ.get("SUPABASE_URL")
 key = os.environ.get("SUPABASE_KEY")
 supabase = create_client(url, key)
+print("URL:", url)
+print("KEY:", key)
+
 
 # =========================
 # EMAIL VALIDATION
