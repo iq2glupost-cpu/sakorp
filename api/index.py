@@ -49,5 +49,5 @@ def whitelist():
         return jsonify({"success": False}), 500
 
 
-# 🔥 BITNO ZA VERCEL
-handler = app
+if __name__ == "__main__":
+    app.run(debug=True, port=5010)
