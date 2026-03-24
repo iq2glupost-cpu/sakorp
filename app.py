@@ -49,7 +49,7 @@ def whitelist():
 
     try:
         # Check if exists
-        existing = supabase.table("early_access_emails") \
+        existing = supabase.table("waitlist") \
             .select("id") \
             .eq("email", email) \
             .execute()
@@ -61,7 +61,7 @@ def whitelist():
             }), 409
 
         # Insert
-        supabase.table("early_access_emails").insert({
+        supabase.table("waitlist").insert({
             "email": email,
             "source": source
         }).execute()
