@@ -1,7 +1,6 @@
 from flask import Flask, render_template, request, jsonify
-from supabase import create_client
+from supabase import create_client, Client
 import os
-import re
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
