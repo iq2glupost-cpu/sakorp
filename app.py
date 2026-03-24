@@ -63,7 +63,6 @@ def whitelist():
         # Insert
         supabase.table("waitlist").insert({
             "email": email,
-            "source": source
         }).execute()
 
         return jsonify({
