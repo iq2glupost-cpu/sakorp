@@ -9,31 +9,45 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
   :root{
     --bg:#fbfbfd;
     --text:#121216;
     --muted:#5f6368;
+
     --accent:#0071e3;
     --accent2:#0a84ff;
+
+    --signal:#06b6d4;
+    --signalSoft: rgba(6,182,212,.12);
+
     --border:rgba(0,0,0,.10);
     --border2:rgba(0,0,0,.06);
+    --card:#ffffff;
+
     --radius:28px;
+    --radius2:18px;
+
     --shadow: 0 12px 40px rgba(0,0,0,.06);
     --shadow2: 0 24px 90px rgba(0,0,0,.11);
+
+    --ok:#22c55e;
+    --warn:#f59e0b;
+    --bad:#ef4444;
+
     --navH: 78px;
   }
 
   *{box-sizing:border-box}
-  html,body{height:100%; scroll-behavior:smooth}
+  html,body{height:100%}
+  html{scroll-behavior:smooth}
   body{
     margin:0;
-    font-family:'Inter',sans-serif;
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     background: var(--bg);
     color: var(--text);
     -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
     overflow-x:hidden;
   }
   a{color:inherit;text-decoration:none}
@@ -46,203 +60,726 @@
       linear-gradient(to right, rgba(0,0,0,.03) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(0,0,0,.03) 1px, transparent 1px);
     background-size: 72px 72px;
-    opacity:.14; z-index:-3;
+    opacity:.14;
+    pointer-events:none;
+    z-index:-3;
     mask-image: radial-gradient(closest-side at 50% 22%, black 32%, transparent 72%);
+  }
+  .bg-orb{
+    position:fixed; inset:-40vh -40vw auto -40vw;
+    height: 95vh;
+    background:
+      radial-gradient(closest-side at 16% 35%, rgba(0,113,227,.16), transparent 60%),
+      radial-gradient(closest-side at 70% 42%, rgba(10,132,255,.11), transparent 62%),
+      radial-gradient(closest-side at 46% 78%, rgba(6,182,212,.10), transparent 62%);
+    filter: blur(22px);
+    pointer-events:none;
+    z-index:-2;
+    animation: floaty 18s ease-in-out infinite;
+  }
+  @keyframes floaty{
+    0%,100%{transform:translate3d(0,0,0)}
+    50%{transform:translate3d(2.2vw,-1.4vh,0)}
   }
 
   /* ===== Nav ===== */
   nav{
     position:fixed; top:0; left:0; right:0;
     background: rgba(255,255,255,.82);
-    backdrop-filter: blur(18px);
+    backdrop-filter: saturate(180%) blur(18px);
     border-bottom: 1px solid var(--border2);
     z-index:100;
   }
   .nav-inner{
     height:var(--navH);
-    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
   }
-  .logo{font-weight:950; letter-spacing: 0.30em; font-size: 16px; text-transform:uppercase;}
+  .logo{
+    display:flex; align-items:center; gap:12px;
+    font-weight:950;
+    letter-spacing: 0.30em;
+    font-size: 16px;
+    text-transform:uppercase;
+  }
+  .mark{
+    width:28px; height:28px; border-radius:10px;
+    position:relative;
+    background: radial-gradient(circle at 30% 25%, rgba(10,132,255,.95), rgba(0,113,227,.55) 55%, rgba(0,0,0,0) 72%);
+    border:1px solid rgba(0,113,227,.22);
+    box-shadow: 0 12px 32px rgba(0,113,227,.14);
+  }
+  .mark::after{
+    content:"";
+    position:absolute;
+    inset:-12px;
+    border-radius:16px;
+    background: radial-gradient(closest-side, rgba(6,182,212,.18), transparent 72%);
+    filter: blur(2px);
+    opacity:.55;
+    animation: livePulse 9.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  @keyframes livePulse{
+    0%,100%{ transform: scale(0.96); opacity:.30 }
+    50%{ transform: scale(1.10); opacity:.75 }
+  }
+
+  .nav-links{
+    display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  }
 
   /* buttons */
   .btn{
     display:inline-flex; align-items:center; justify-content:center;
-    padding: 12px 16px; border-radius: 14px; font-weight: 800; font-size: 13px;
-    cursor:pointer; transition: transform .18s ease, box-shadow .18s ease;
+    gap:10px;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: .2px;
+    border:1px solid transparent;
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease, border-color .18s ease, opacity .18s ease;
+    user-select:none;
+    white-space:nowrap;
   }
+  .btn:active{transform: translateY(1px) scale(.99)}
   .btn.primary{
-    color:#fff; background: linear-gradient(180deg, var(--accent2), var(--accent));
-    border:none; box-shadow: 0 14px 34px rgba(0,113,227,.22);
+    color:#fff;
+    background: linear-gradient(180deg, var(--accent2), var(--accent));
+    box-shadow: 0 14px 34px rgba(0,113,227,.22);
   }
+  .btn.primary:hover{transform: translateY(-1px); box-shadow: 0 18px 44px rgba(0,113,227,.26)}
   .btn.secondary{
-    background:#fff; border: 1px solid var(--border);
+    background:#fff;
+    border-color: var(--border);
+    color: var(--text);
     box-shadow: 0 10px 28px rgba(0,0,0,.06);
   }
-  .btn.ghost{background: transparent; border:none; color: var(--muted);}
+  .btn.secondary:hover{transform: translateY(-1px); box-shadow: 0 14px 38px rgba(0,0,0,.08)}
+  .btn.ghost{
+    background: transparent;
+    border-color: transparent;
+    color: var(--muted);
+    font-weight: 800;
+  }
+  .btn.ghost:hover{color: var(--text); background: rgba(0,0,0,.03); border-color: rgba(0,0,0,.04)}
 
   /* ===== Sections ===== */
   section{ padding: 96px 0; }
-  .hero{ padding-top: calc(var(--navH) + 78px); text-align:center; }
-  .hero h1{ margin: 18px auto 0; font-size: clamp(42px, 5.8vw, 76px); font-weight: 950; letter-spacing: -0.050em;}
-  .hero p{ margin: 18px auto 0; max-width: 940px; color: var(--muted); font-size: 18px; line-height: 1.70; }
+  .hero{
+    padding-top: calc(var(--navH) + 78px);
+    text-align:center;
+  }
+
+  .pill{
+    display:inline-flex; align-items:center; gap:10px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(6,182,212,.20);
+    background: rgba(6,182,212,.06);
+    color: rgba(0,0,0,.78);
+    font-weight: 900;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform:uppercase;
+    position:relative;
+  }
+  .pill .dot{
+    width:8px;height:8px;border-radius:999px;
+    background: rgba(6,182,212,.95);
+    box-shadow: 0 0 0 5px rgba(6,182,212,.14);
+  }
+  .pill::after{
+    content:"";
+    position:absolute; inset:-1px;
+    border-radius:999px;
+    background: radial-gradient(closest-side, rgba(6,182,212,.14), transparent 70%);
+    opacity:.55;
+    animation: livePulse 9.5s ease-in-out infinite;
+    pointer-events:none;
+  }
+  .pill > *{position:relative; z-index:1}
+
+  .hero h1{
+    margin: 18px auto 0;
+    font-size: clamp(42px, 5.8vw, 76px);
+    font-weight: 950;
+    letter-spacing: -0.050em;
+    line-height: 1.02;
+    max-width: 1040px;
+  }
+  .hero p{
+    margin: 18px auto 0;
+    max-width: 940px;
+    color: var(--muted);
+    font-size: clamp(16px, 2.1vw, 20px);
+    line-height: 1.70;
+  }
+
+  .subhero{
+    margin-top: 34px;
+    display:flex;
+    justify-content:center;
+  }
+  .trustbar{
+    width: min(1080px, 100%);
+    display:grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 12px;
+  }
+  .trust{
+    background: rgba(255,255,255,.84);
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    padding: 16px 16px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.04);
+    text-align:left;
+  }
+  .trust b{display:block; font-weight: 950; font-size: 13px; letter-spacing: -.01em}
+  .trust span{display:block; color: var(--muted); font-size: 12px; margin-top: 6px; line-height: 1.40}
+
+  .h2{
+    font-size: clamp(34px, 4.1vw, 54px);
+    letter-spacing: -0.045em;
+    margin:0;
+    font-weight: 950;
+    line-height: 1.08;
+  }
+  .lead{
+    margin: 14px 0 0;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.75;
+    max-width: 920px;
+  }
 
   /* ===== Cards ===== */
-  .card-grid{ margin-top: 28px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .card-grid{
+    margin-top: 28px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    align-items:stretch;
+  }
   .pCard{
-    background:#fff; border:1px solid var(--border2); border-radius: var(--radius);
-    padding: 28px; box-shadow: var(--shadow); cursor:pointer; display:block;
+    background:#fff;
+    border:1px solid var(--border2);
+    border-radius: var(--radius);
+    padding: 28px;
+    box-shadow: var(--shadow);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    position:relative;
+    overflow:hidden;
+    display:block; /* link */
+    cursor:pointer;
   }
-  .pCard:hover{ transform: translateY(-2px); box-shadow: var(--shadow2); }
-  .pTitle{ margin: 12px 0 0; font-weight: 950; font-size: 20px; }
-  .pSub{ margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+  .pCard:hover{
+    transform: translateY(-2px);
+    box-shadow: var(--shadow2);
+    border-color: rgba(0,0,0,.10);
+  }
+  .pCard:before{
+    content:"";
+    position:absolute; inset:-1px;
+    background: radial-gradient(1100px 360px at 10% 0%, rgba(0,113,227,.09), transparent 60%);
+    pointer-events:none;
+    opacity:.9;
+  }
+  .pCard > *{position:relative; z-index:1}
 
-  /* ===== Modal (Whitelist) ===== */
-  .modal-overlay {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-    display: none; align-items: center; justify-content: center; z-index: 1000;
-    opacity: 0; transition: opacity 0.3s ease;
+  .tag{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: rgba(29,29,31,.75);
   }
-  .modal-overlay.active { display: flex; opacity: 1; }
-  .modal-content {
-    background: #fff; padding: 40px; border-radius: 24px;
-    width: 90%; max-width: 440px; box-shadow: var(--shadow2);
-    text-align: center; position: relative;
-    transform: translateY(20px); transition: transform 0.3s ease;
+  .tag .dot{
+    width:8px; height:8px; border-radius: 999px;
+    background: rgba(0,113,227,.85);
+    box-shadow: 0 0 0 4px rgba(0,113,227,.12);
   }
-  .modal-overlay.active .modal-content { transform: translateY(0); }
-  .close-modal {
-    position: absolute; top: 16px; right: 16px; cursor: pointer;
-    font-size: 24px; color: var(--muted); border: none; background: none;
-  }
-  .modal-content h3 { margin: 0 0 10px; font-size: 24px; font-weight: 900; }
-  .modal-content p { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
-  .modal-content input {
-    width: 100%; padding: 14px 16px; border-radius: 12px;
-    border: 1px solid var(--border); font-size: 16px; font-family: inherit;
-    margin-bottom: 16px; outline: none;
-  }
-  .modal-content input:focus { border-color: var(--accent); }
-  .modal-content button { width: 100%; }
-  
-  #formMessage { margin-top: 16px; font-size: 14px; font-weight: 600; display: none; }
-  .msg-success { color: #22c55e; }
-  .msg-error { color: #ef4444; }
+  .tag .dot.cyan{ background: rgba(6,182,212,.92); box-shadow: 0 0 0 4px rgba(6,182,212,.14); }
+  .tag .dot.green{ background: rgba(34,197,94,.90); box-shadow: 0 0 0 4px rgba(34,197,94,.14); }
 
+  .pTitle{
+    margin: 12px 0 0;
+    font-weight: 950;
+    letter-spacing: -.02em;
+    font-size: 20px;
+  }
+  .pSub{
+    margin: 8px 0 0;
+    color: var(--muted);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+
+  .pHighlight{
+    margin-top: 14px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .pillMini{
+    display:inline-flex; align-items:center; gap:8px;
+    padding: 8px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    background: rgba(0,0,0,.012);
+    color: rgba(0,0,0,.74);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: .02em;
+    white-space:nowrap;
+  }
+  .pillMini.cyan{
+    border-color: rgba(6,182,212,.22);
+    background: rgba(6,182,212,.07);
+  }
+  .pillMini.green{
+    border-color: rgba(34,197,94,.22);
+    background: rgba(34,197,94,.07);
+  }
+
+  .priceLine{
+    margin-top: 14px;
+    font-weight: 950;
+    font-size: 46px;
+    letter-spacing: -0.05em;
+    line-height: 1;
+  }
+  .priceLine span{
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--muted);
+    letter-spacing: .02em;
+    margin-left: 8px;
+  }
+
+  .rows{
+    margin-top: 14px;
+    border:1px solid var(--border2);
+    border-radius: 18px;
+    overflow:hidden;
+    background: rgba(0,0,0,.012);
+  }
+  .row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    padding: 12px 14px;
+    border-top:1px solid var(--border2);
+    font-size: 13px;
+    color: rgba(29,29,31,.82);
+  }
+  .row:first-child{border-top:none}
+  .row b{font-weight: 950}
+
+  .fineNote{
+    margin-top: 12px;
+    color: rgba(0,0,0,.62);
+    font-size: 12px;
+    line-height: 1.55;
+  }
+
+  /* workflow */
+  .flow{
+    margin-top: 28px;
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .step{
+    background:#fff;
+    border:1px solid var(--border2);
+    border-radius: 18px;
+    padding: 18px 18px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.04);
+  }
+  .step .top{
+    display:flex; justify-content:space-between; align-items:center;
+    gap:10px;
+  }
+  .chip{
+    font-size: 11px;
+    font-weight: 950;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: 7px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--border2);
+    background: rgba(0,0,0,.015);
+    color: rgba(29,29,31,.75);
+    white-space:nowrap;
+  }
+  .chip.ok{border-color: rgba(34,197,94,.18); background: rgba(34,197,94,.06); color: rgba(34,197,94,.95)}
+  .chip.warn{border-color: rgba(245,158,11,.18); background: rgba(245,158,11,.06); color: rgba(245,158,11,.95)}
+  .chip.bad{border-color: rgba(239,68,68,.18); background: rgba(239,68,68,.06); color: rgba(239,68,68,.95)}
+  .step b{
+    display:block;
+    margin-top: 12px;
+    font-weight: 950;
+    letter-spacing: -.01em;
+  }
+  .step span{
+    display:block;
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.70;
+  }
+
+  /* legal box */
+  .independent-wrap{
+    margin-top: 18px;
+    display:flex;
+    justify-content:center;
+  }
+  .independent-box{
+    width:min(980px,100%);
+    background: rgba(255,255,255,.82);
+    border: 1px solid var(--border2);
+    border-radius: 18px;
+    padding: 14px 14px;
+    box-shadow: 0 10px 28px rgba(0,0,0,.04);
+    text-align:left;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.60;
+  }
+  .independent-box b{color: var(--text); font-weight: 950}
+
+  /* footer */
+  footer{
+    padding: 44px 0 70px;
+    border-top: 1px solid var(--border2);
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  footer a{color: var(--accent); font-weight: 950}
+  .footer-grid{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap: 16px;
+    align-items:start;
+  }
+
+  /* reveal */
+  .reveal{opacity:0; transform: translateY(12px); transition: opacity .7s ease, transform .7s ease}
+  .reveal.on{opacity:1; transform: translateY(0)}
+
+  /* responsive */
+  @media (max-width: 980px){
+    .trustbar{grid-template-columns: 1fr 1fr}
+    .flow{grid-template-columns: 1fr 1fr}
+    .card-grid{grid-template-columns: 1fr}
+    .nav-inner{height:auto; padding:14px 0}
+  }
+  @media (max-width: 520px){
+    .btn{width:100%}
+    .nav-links{width:100%}
+    .flow{grid-template-columns: 1fr}
+  }
 </style>
 </head>
+
 <body>
 <div class="bg-grid"></div>
+<div class="bg-orb"></div>
 
 <nav>
-  <div class="container nav-inner">
-    <a class="logo" href="#top">SAKORP</a>
-    <div class="nav-links">
-      <a class="btn ghost" href="#pricing">Pricing</a>
-      <button class="btn secondary" onclick="openModal()">Join Whitelist</button>
-      <button class="btn primary" onclick="openModal()">Early Access</button>
+  <div class="container">
+    <div class="nav-inner">
+      <a class="logo" href="#top" aria-label="SAKORP Shield Home">
+        <span class="mark" aria-hidden="true"></span>
+        SAKORP
+      </a>
+
+      <div class="nav-links" id="navLinks">
+        <a class="btn ghost" href="#platform">Platform</a>
+        <a class="btn ghost" href="#workflow">Workflow</a>
+        <a class="btn ghost" href="#pricing">Pricing</a>
+
+        <a class="btn secondary" id="navLogin" href="/login">Login</a>
+        <a class="btn primary" id="navRegister" href="/register">Create account</a>
+        <a class="btn primary" id="navDashboard" href="/dashboard" style="display:none;">Open dashboard</a>
+      </div>
     </div>
   </div>
 </nav>
 
 <main id="top">
+  <!-- HERO -->
   <section class="hero">
     <div class="container">
-      <h1>Observe Amazon Buy Box shifts early.</h1>
-      <p>SAKORP Shield monitors Amazon listing signals and records every scan in a forensic timeline. Platform is currently in closed beta.</p>
-    </div>
-  </section>
+      <div class="pill reveal">
+        <span class="dot" aria-hidden="true"></span>
+        LIVE AMAZON MONITORING • FORENSIC LOGS
+      </div>
 
-  <section id="pricing">
-    <div class="container">
-      <div class="card-grid">
-        <div class="pCard" onclick="openModal()">
-          <div class="pTitle">Standard — $49.99 / month</div>
-          <div class="pSub">Click to join the waitlist for the Standard plan.</div>
-        </div>
-        <div class="pCard" onclick="openModal()">
-          <div class="pTitle">Standard ASIN — $19.99 / mo</div>
-          <div class="pSub">Click to request early access for add-ons.</div>
-        </div>
-        <div class="pCard" onclick="openModal()">
-          <div class="pTitle">Protected ASIN — $39.99 / mo</div>
-          <div class="pSub">Priority waitlist for high-frequency monitoring.</div>
+      <h1 class="reveal" style="transition-delay:.05s;">
+        Observe Amazon Buy Box shifts early.
+        Preserve proof you can act on.
+      </h1>
+
+      <p class="reveal" style="transition-delay:.10s;">
+        SAKORP Shield monitors Amazon listing signals on a predictable cadence, observes Buy Box state and seller changes,
+        and records every scan in a forensic timeline with precise timestamps.
+        Built for operators who need clarity and documentation — not noise.
+      </p>
+
+      <div class="subhero reveal" style="transition-delay:.18s;">
+        <div class="trustbar">
+          <div class="trust">
+            <b>Predictable scans</b>
+            <span>Plan-based cadence: Standard (~60 min) or Protected (~30 min) per ASIN.</span>
+          </div>
+          <div class="trust">
+            <b>Forensic timeline</b>
+            <span>Every scan is logged with timestamps so you can review what changed and when.</span>
+          </div>
+          <div class="trust">
+            <b>Low-noise alerts</b>
+            <span>Critical notifications are throttled (max once per 24h per ASIN).</span>
+          </div>
+          <div class="trust">
+            <b>14-day free trial</b>
+            <span><b>No credit card required</b> to start.</span>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- PLATFORM -->
+  <section id="platform">
+    <div class="container">
+      <h2 class="h2 reveal">What Shield does</h2>
+      <p class="lead reveal" style="transition-delay:.05s;">
+        A focused workflow for Amazon listing visibility:
+        <b>monitor → detect → document → export</b>.
+        You get timestamps, history, and evidence-ready logs — so decisions are based on facts.
+      </p>
+    </div>
+  </section>
+
+  <!-- WORKFLOW -->
+  <section id="workflow" style="padding-top:0;">
+    <div class="container">
+      <div class="flow">
+        <div class="step reveal" style="transition-delay:.08s;">
+          <div class="top">
+            <div class="chip">Monitor</div>
+            <div class="chip ok">always-on</div>
+          </div>
+          <b>Consistent scanning</b>
+          <span>Amazon listings are scanned on a stable cadence based on your plan.</span>
+        </div>
+
+        <div class="step reveal" style="transition-delay:.12s;">
+          <div class="top">
+            <div class="chip">Detect</div>
+            <div class="chip warn">signal</div>
+          </div>
+          <b>Change detection</b>
+          <span>Identify meaningful shifts in Buy Box state, seller presence, and listing status.</span>
+        </div>
+
+        <div class="step reveal" style="transition-delay:.16s;">
+          <div class="top">
+            <div class="chip">Document</div>
+            <div class="chip ok">timeline</div>
+          </div>
+          <b>Forensic logs</b>
+          <span>Each scan is appended into a clear, timestamped timeline inside your dashboard.</span>
+        </div>
+
+        <div class="step reveal" style="transition-delay:.20s;">
+          <div class="top">
+            <div class="chip">Export</div>
+            <div class="chip bad">artifact</div>
+          </div>
+          <b>Evidence PDF</b>
+          <span>Generate a structured report for documentation and escalation workflows.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing">
+    <div class="container">
+      <h2 class="h2 reveal">Pricing</h2>
+      <p class="lead reveal" style="transition-delay:.05s;">
+        Start with a <b>14-day free trial</b>. <b>No credit card required.</b>
+      </p>
+
+      <div class="card-grid">
+        <!-- STANDARD PLAN -->
+        <a class="pCard reveal" style="transition-delay:.08s;" href="/login" aria-label="Standard plan — login">
+          <div class="tag"><span class="dot cyan"></span> Standard plan</div>
+          <div class="pTitle">Standard — $49.99 / month</div>
+          <div class="pSub">
+            The foundation of Amazon Buy Box monitoring with forensic timelines and low-noise alerts.
+          </div>
+
+          <div class="pHighlight">
+            <div class="pillMini cyan">14-day free trial</div>
+            <div class="pillMini green">No card required</div>
+            <div class="pillMini">Cancel anytime</div>
+          </div>
+
+          <div class="rows" aria-label="Standard plan includes">
+            <div class="row"><span>Included</span><b>3× Standard ASINs</b></div>
+            <div class="row"><span>Cadence</span><b>~60-minute scans</b></div>
+            <div class="row"><span>Logs</span><b>Timestamped forensic timeline</b></div>
+            <div class="row"><span>Alerts</span><b>Low-noise critical notifications</b></div>
+          </div>
+
+          <div class="fineNote">
+            Monitoring is observational and informational. Shield does not influence Buy Box outcomes.
+          </div>
+        </a>
+
+        <!-- STANDARD ASIN ADD-ON -->
+        <a class="pCard reveal" style="transition-delay:.12s;" href="/login" aria-label="Standard ASIN add-on — login">
+          <div class="tag"><span class="dot"></span> Add-on</div>
+          <div class="pTitle">Standard ASIN — $19.99 / ASIN / month</div>
+          <div class="pSub">
+            Add coverage for more listings under the Standard cadence and the same dashboard.
+          </div>
+
+          <div class="rows" aria-label="Standard ASIN add-on details">
+            <div class="row"><span>Includes</span><b>1 additional Standard ASIN</b></div>
+            <div class="row"><span>Cadence</span><b>~60-minute scans</b></div>
+            <div class="row"><span>Logs</span><b>Full forensic timeline</b></div>
+            <div class="row"><span>Alerts</span><b>Included</b></div>
+          </div>
+
+          <div class="fineNote">
+            Best for expanding coverage across multiple Amazon listings.
+          </div>
+        </a>
+
+        <!-- PROTECTED ASIN ADD-ON (replace your current Protected card with this) -->
+        <a class="pCard reveal" style="transition-delay:.16s;" href="/login" aria-label="Protected ASIN add-on — login">
+          <div class="tag"><span class="dot green"></span> High priority</div>
+
+          <div class="pTitle">Protected ASIN — $39.99 / ASIN / month</div>
+
+          <div class="pSub">
+            High-frequency monitoring with AI-assisted context for revenue-critical Amazon listings where short-lived changes
+            and timing matter most.
+          </div>
+
+          <div class="rows" aria-label="Protected ASIN add-on details">
+            <div class="row"><span>Includes</span><b>1 Protected ASIN</b></div>
+            <div class="row"><span>Cadence</span><b>~30-minute scans</b></div>
+            <div class="row"><span>Observation</span><b>Higher observation density</b></div>
+            <div class="row"><span>Visibility</span><b>Short-lived event visibility</b></div>
+            <div class="row"><span>Nexus</span><b>AI-assisted signal context</b></div>
+            <div class="row"><span>Logs</span><b>Full forensic timeline</b></div>
+          </div>
+
+          <div class="fineNote">
+            Use Protected ASINs for top sellers and higher-risk listings where delayed visibility can be costly.
+            Monitoring and AI-assisted analysis are observational and informational only.
+          </div>
+        </a>
+
+
+
+  <!-- Independent disclaimer -->
+  <section id="legal" style="padding-top:0;">
+    <div class="container">
+      <div class="independent-wrap reveal">
+        <div class="independent-box">
+          <b>Independent tool.</b> SAKORP Shield is not affiliated with, endorsed by, or sponsored by Amazon.
+          Monitoring outputs are observational and informational only and do not guarantee outcomes.
+          Use is governed by the <a href="/terms" target="_blank" rel="noopener">Terms of Use</a>.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="logo" style="letter-spacing:.28em;">
+            <span class="mark" aria-hidden="true"></span>
+            SAKORP
+          </div>
+
+          <div style="margin-top:10px;">
+            SAKORP Shield — Amazon Buy Box Monitoring &amp; Forensic Logs.
+          </div>
+          <div style="margin-top:10px;">
+            <b>Disclaimer:</b> Not affiliated with, endorsed by, or sponsored by Amazon.
+          </div>
+          <div style="margin-top:10px;">
+            <a href="/terms" target="_blank" rel="noopener">Terms of Use</a>
+          </div>
+        </div>
+
+        <div>
+          <div style="font-weight:950; color: rgba(29,29,31,.85);">Quick links</div>
+          <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+            <a href="#platform">Platform</a>
+            <a href="#workflow">Workflow</a>
+            <a href="#pricing">Pricing</a>
+            <a href="/login">Login</a>
+            <a href="/register">Create account</a>
+            <a href="/terms">Terms</a>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border2);">
+        © <span id="year"></span> SAKORP. All rights reserved.
+      </div>
+    </div>
+  </footer>
 </main>
 
-<div class="modal-overlay" id="whitelistModal">
-  <div class="modal-content">
-    <button class="close-modal" onclick="closeModal()">&times;</button>
-    <h3>Get Early Access</h3>
-    <p>SAKORP Shield is currently in closed beta. Leave your email to join the whitelist.</p>
-    
-    <input type="email" id="emailInput" placeholder="Enter your email address" required>
-    <button class="btn primary" id="submitBtn" onclick="submitToSupabase()">Join Whitelist</button>
-    
-    <div id="formMessage"></div>
-  </div>
-</div>
-
 <script>
-  // Tvoj Supabase ključ i URL (ZAMENI OVO SA SVOJIM PODACIMA)
-  const SUPABASE_URL = 'https://TVOJ_PROJEKAT.supabase.co';
-  const SUPABASE_ANON_KEY = 'TVOJ_ANON_KEY';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  document.getElementById('year').textContent = String(new Date().getFullYear());
 
-  const modal = document.getElementById('whitelistModal');
-  const msgDiv = document.getElementById('formMessage');
+  // Reveal animation
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(ent=>{
+      if(ent.isIntersecting){
+        ent.target.classList.add('on');
+        io.unobserve(ent.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
 
-  function openModal() {
-    modal.classList.add('active');
-    msgDiv.style.display = 'none';
-  }
+  // Auth-aware header (optional)
+  // If your backend injects: window.SAKORP_USER = { email: "...", status:"PAID" }
+  (function(){
+    const user = window.SAKORP_USER || null;
+    if(!user) return;
 
-  function closeModal() {
-    modal.classList.remove('active');
-  }
+    const login = document.getElementById('navLogin');
+    const reg = document.getElementById('navRegister');
+    const dash = document.getElementById('navDashboard');
 
-  // Zatvaranje na klik van modala
-  window.onclick = function(event) {
-    if (event.target == modal) { closeModal(); }
-  }
-
-  async function submitToSupabase() {
-    const email = document.getElementById('emailInput').value;
-    const btn = document.getElementById('submitBtn');
-
-    if (!email || !email.includes('@')) {
-      showMessage('Please enter a valid email.', 'error');
-      return;
-    }
-
-    btn.textContent = 'Submitting...';
-    btn.disabled = true;
-
-    // Pretpostavka: Imaš tabelu koja se zove 'whitelist' sa kolonom 'email'
-    const { data, error } = await supabase
-      .from('whitelist')
-      .insert([{ email: email }]);
-
-    if (error) {
-      showMessage('Error: ' + error.message, 'error');
-    } else {
-      showMessage('Success! You are on the list.', 'success');
-      document.getElementById('emailInput').value = '';
-    }
-
-    btn.textContent = 'Join Whitelist';
-    btn.disabled = false;
-  }
-
-  function showMessage(text, type) {
-    msgDiv.textContent = text;
-    msgDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
-    msgDiv.style.display = 'block';
-  }
+    if(login) login.style.display = 'none';
+    if(reg) reg.style.display = 'none';
+    if(dash) dash.style.display = 'inline-flex';
+  })();
 </script>
 </body>
 </html>
-
