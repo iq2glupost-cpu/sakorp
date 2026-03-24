@@ -1,4 +1,4 @@
-flask==3.0.2
-supabase==2.4.0
+Flask
 requests
-# rebuild123
+python_dotenv
+supabase
