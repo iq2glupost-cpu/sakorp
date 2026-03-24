@@ -1,17 +1,9 @@
 from flask import Flask, render_template, request, jsonify
-from supabase import create_client, Client
+from supabase import create_client
 import os
 import re
 
 app = Flask(__name__)
-
-# =========================
-# SUPABASE CONFIG
-# =========================
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-#supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # =========================
 # EMAIL VALIDATION
@@ -31,6 +23,18 @@ def home():
 
 @app.route('/whitelist', methods=['POST'])
 def whitelist():
+    # 🔥 Supabase init OVDE (NE na vrhu fajla)
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        return jsonify({
+            "success": False,
+            "message": "Server config error"
+        }), 500
+
+    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+
     data = request.get_json()
 
     email = data.get('email', '').strip().lower()
@@ -45,9 +49,9 @@ def whitelist():
 
     try:
         # Check if exists
-        existing = supabase.table("early_access_emails")\
-            .select("id")\
-            .eq("email", email)\
+        existing = supabase.table("early_access_emails") \
+            .select("id") \
+            .eq("email", email) \
             .execute()
 
         if existing.data:
@@ -68,8 +72,11 @@ def whitelist():
         }), 200
 
     except Exception as e:
+        print("ERROR:", str(e)) # 🔥 vidi log u Vercelu
         return jsonify({
-            "success": True}),
+            "success": False,
+            "message": "Server error"
+        }), 500
 
 
 # =========================
