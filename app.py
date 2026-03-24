@@ -38,7 +38,7 @@ def whitelist():
     data = request.get_json()
 
     email = data.get('email', '').strip().lower()
-    source = data.get('source', 'unknown')
+
 
     # Validate email
     if not email or not is_valid_email(email):
