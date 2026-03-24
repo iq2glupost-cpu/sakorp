@@ -24,44 +24,28 @@ def home():
     return render_template('index.html')
 
 
-@app.route('/whitelist', methods=['POST'])
-def whitelist():
+@app.route("/api/waitlist", methods=["POST"])
+def waitlist():
+    data = request.json
+    email = data.get("email")
+
+    if not email:
+        return jsonify({
+            "status": "error",
+            "message": "Email je obavezan."
+        }), 400
+
     try:
-        data = request.get_json()
-        print("DATA:", data)
-
-        email = data.get('email', '').strip().lower()
-        print("EMAIL:", email)
-
-        if not email or not is_valid_email(email):
-            return jsonify({
-                "success": False,
-                "message": "Invalid email"
-            }), 400
-
-        # 🔥 OVDE PRAVIŠ SUPABASE CLIENT
-        supabase = create_client(
-            os.getenv("SUPABASE_URL"),
-            os.getenv("SUPABASE_KEY")
-        )
-
-        response = supabase.table("waitlist").insert({
-            "email": email
-        }).execute()
-
-        print("SUPABASE RESPONSE:", response)
-
+        response = supabase.table('waitlist').insert({"email": email}).execute()
         return jsonify({
-            "success": True
-        }), 200
-
+            "status": "success",
+            "message": "Uspešno dodato na listu!"
+        })
     except Exception as e:
-        print("FULL ERROR:", str(e))
         return jsonify({
-            "success": False,
+            "status": "error",
             "message": str(e)
         }), 500
-
 
 # =========================
 # RUN LOCAL
