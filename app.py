@@ -23,24 +23,10 @@ def home():
 
 @app.route('/whitelist', methods=['POST'])
 def whitelist():
-    # 🔥 Supabase init OVDE (NE na vrhu fajla)
-    SUPABASE_URL = os.getenv("SUPABASE_URL")
-    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-
-    if not SUPABASE_URL or not SUPABASE_KEY:
-        return jsonify({
-            "success": False,
-            "message": "Server config error"
-        }), 500
-
-    supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
     data = request.get_json()
 
     email = data.get('email', '').strip().lower()
 
-
-    # Validate email
     if not email or not is_valid_email(email):
         return jsonify({
             "success": False,
@@ -48,21 +34,8 @@ def whitelist():
         }), 400
 
     try:
-        # Check if exists
-        existing = supabase.table("waitlist") \
-            .select("id") \
-            .eq("email", email) \
-            .execute()
-
-        if existing.data:
-            return jsonify({
-                "success": False,
-                "message": "Email already on the whitelist"
-            }), 409
-
-        # Insert
         supabase.table("waitlist").insert({
-            "email": email,
+            "email": email
         }).execute()
 
         return jsonify({
@@ -71,7 +44,7 @@ def whitelist():
         }), 200
 
     except Exception as e:
-        print("ERROR:", str(e)) # 🔥 vidi log u Vercelu
+        print("ERROR:", str(e)) # 👈 OVO JE KLJUČNO
         return jsonify({
             "success": False,
             "message": "Server error"
