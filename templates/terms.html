@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SHIELD | Terms of Use</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#020617;
+      --panel: rgba(15,23,42,0.78);
+      --stroke: rgba(59,130,246,0.20);
+      --stroke2: rgba(234,242,255,0.10);
+      --text: rgba(234,242,255,0.92);
+      --muted: rgba(234,242,255,0.66);
+      --muted2: rgba(234,242,255,0.52);
+      --blue:#3b82f6;
+      --blue2:#60a5fa;
+      --shadow: 0 18px 70px rgba(0,0,0,0.55);
+      --radius: 22px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:
+        radial-gradient(1100px 650px at 20% 10%, rgba(37,99,235,0.18), transparent 60%),
+        radial-gradient(900px 520px at 70% 0%, rgba(96,165,250,0.10), transparent 55%),
+        radial-gradient(900px 650px at 50% 100%, rgba(37,99,235,0.10), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.65;
+    }
+
+    /* Top bar */
+    nav{
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(2,6,23,0.72);
+      border-bottom: 1px solid rgba(234,242,255,0.08);
+      backdrop-filter: blur(16px);
+    }
+    .nav-inner{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .brand{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      text-decoration:none;
+      color: var(--text);
+      font-weight: 950;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      cursor:pointer;
+      user-select:none;
+      font-size: 12px;
+    }
+    .pill{
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(234,242,255,0.10);
+      background: rgba(255,255,255,0.02);
+      white-space:nowrap;
+    }
+    .btn{
+      border: 1px solid rgba(234,242,255,0.10);
+      background: rgba(255,255,255,0.03);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, background .16s ease, opacity .16s ease;
+      user-select:none;
+      letter-spacing: .02em;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      border-color: rgba(234,242,255,0.16);
+      background: rgba(255,255,255,0.04);
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(59,130,246,0.95), rgba(37,99,235,0.92));
+      border-color: rgba(59,130,246,0.35);
+      color:#041025;
+    }
+
+    /* Content */
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 26px 18px 80px;
+    }
+    .hero{
+      background: rgba(15,23,42,0.60);
+      border: 1px solid rgba(234,242,255,0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    h1{
+      margin:0;
+      font-size: 28px;
+      font-weight: 950;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .sub{
+      margin-top: 10px;
+      color: var(--muted);
+      max-width: 900px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .callout{
+      margin-top: 14px;
+      border: 1px solid rgba(59,130,246,0.22);
+      background: rgba(59,130,246,0.08);
+      padding: 14px 14px;
+      border-radius: 18px;
+    }
+    .callout .tag{
+      display:inline-flex;
+      gap: 8px;
+      align-items:center;
+      font-size: 10px;
+      font-weight: 950;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: rgba(96,165,250,0.95);
+      margin-bottom: 8px;
+    }
+    .card{
+      margin-top: 14px;
+      background: var(--panel);
+      border: 1px solid rgba(234,242,255,0.10);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 18px;
+    }
+    .section{
+      padding: 16px 0;
+      border-top: 1px solid rgba(234,242,255,0.08);
+    }
+    .section:first-child{ border-top:none; padding-top:0; }
+
+    .h2{
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      margin: 0 0 10px;
+      color: rgba(234,242,255,0.82);
+    }
+    .p{
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    ul{
+      margin: 10px 0 0 18px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .mono{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(234,242,255,0.55);
+      font-weight: 800;
+    }
+
+    footer{
+      margin-top: 14px;
+      display:flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid rgba(234,242,255,0.08);
+      padding-top: 14px;
+      color: rgba(234,242,255,0.60);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    a{ color: var(--blue2); text-decoration: none; font-weight: 900; }
+    a:hover{ text-decoration: underline; }
+
+    @media (max-width: 720px){
+      h1{ font-size: 22px; }
+      .pill{ width:100%; text-align:center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-inner">
+      <div class="brand" onclick="safeBack()">SHIELD<span style="color:var(--blue2)">.</span>CONSOLE</div>
+      <div class="pill">Terms of Use • Legal</div>
+      <button class="btn" onclick="safeBack()">Back</button>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="hero">
+      <h1>Terms of Use</h1>
+      <p class="sub">
+        These Terms govern your access to and use of the Service (dashboards, alerts, reports, and related software).
+        By accessing or using the Service, you agree to these Terms.
+      </p>
+
+      <div class="callout">
+        <div class="tag">IMPORTANT</div>
+        <div class="p" style="margin:0;">
+          <b>Independent third-party tool.</b> The Service is not affiliated with, endorsed by, or sponsored by Amazon.com, Inc. or its affiliates,
+          or any marketplace. Outputs are <b>informational</b> and do not guarantee outcomes.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section">
+        <div class="h2">1. Definitions</div>
+        <p class="p">
+          “Service” means the website, dashboards, alerts, reports (PDF or otherwise), and related software.
+          “You” means the user or entity accessing the Service.
+          “Third-Party Providers” means external services/APIs used to obtain or process data.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">2. Informational Service Only</div>
+        <p class="p">
+          The Service may monitor or summarize <b>publicly available</b> and/or <b>third-party provided</b> signals related to listings and sellers.
+          Outputs are provided <b>for informational purposes only</b>.
+        </p>
+        <p class="p">
+          <b>No legal, compliance, or financial advice.</b> You are responsible for verifying information and deciding how to act.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">3. No Affiliation / Trademarks</div>
+        <p class="p">
+          Any mention of “Amazon”, “Buy Box”, or other marks is for descriptive purposes only. All trademarks belong to their owners.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">4. No Guarantee of Results</div>
+        <p class="p">
+          The Service does <b>not</b> guarantee that you will win, keep, restore, or defend any Buy Box position, listing control,
+          enforcement outcome, takedown, reinstatement, or any marketplace action.
+        </p>
+        <ul>
+          <li>Signals may be incomplete, delayed, or unavailable.</li>
+          <li>Seller identity/pricing/fulfillment data may be missing at capture time.</li>
+          <li>Reports reflect observed state at a specific timestamp, not a permanent truth.</li>
+          <li>Marketplace rules and algorithms can change without notice.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="h2">5. Third-Party Providers</div>
+        <p class="p">
+          The Service may rely on Third-Party Providers. We do not control their availability, accuracy, rate limits, outages, or policy changes.
+          Provider issues may affect the Service.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">6. Evidence Reports / PDFs</div>
+        <p class="p">
+          Reports (including PDFs) are generated from captured data. They are intended to help document observed conditions.
+          <b>They do not guarantee enforcement or platform action.</b>
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">7. Acceptable Use</div>
+        <p class="p">
+          You agree to use the Service lawfully. You must not use it to harass, extort, defame, or unlawfully target any party.
+        </p>
+        <ul>
+          <li>No falsification, manipulation, or misrepresentation of reports.</li>
+          <li>No use that violates third-party policies or applicable law.</li>
+        </ul>
+      </div>
+
+      <div class="section">
+        <div class="h2">8. Accounts &amp; Security</div>
+        <p class="p">
+          You are responsible for maintaining credential confidentiality and restricting access to authorized users.
+          We are not liable for losses caused by compromised credentials or shared access.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">9. Availability / “As Is”</div>
+        <p class="p">
+          The Service is provided <b>“as is”</b> and <b>“as available”</b>. We do not guarantee uninterrupted access, continuous uptime,
+          or error-free operation.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">10. Limitation of Liability</div>
+        <p class="p">
+          To the maximum extent permitted by law, the Service and its operators are not liable for indirect, incidental, special,
+          consequential, exemplary, or punitive damages, or any loss of profits, revenue, data, goodwill, or business interruption.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">11. No Refunds</div>
+        <p class="p">
+          <b>All sales are final.</b> Due to the digital nature of the Service and immediate access upon purchase,
+          <b>refunds are not provided</b>.
+        </p>
+        <p class="p">
+          <b>Exception:</b> If a refund is required by applicable mandatory law, we will comply only to the extent required.
+          In all other cases, no refunds, credits, or chargeback-based “free usage” are permitted.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">12. Suspension / Termination</div>
+        <p class="p">
+          Access may be suspended or terminated if we reasonably believe there is misuse, unlawful activity, policy violation,
+          or security risk.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">13. Changes</div>
+        <p class="p">
+          We may update these Terms from time to time. Updates are effective upon posting. Continued use means acceptance.
+        </p>
+      </div>
+
+      <div class="section">
+        <div class="h2">14. Contact</div>
+        <p class="p">
+          For questions regarding these Terms, contact the operator through the official channel provided in your onboarding or Service interface.
+        </p>
+        <p class="mono">Last updated: 2026-01</p>
+      </div>
+
+      <footer>
+        <div><b>Independent monitoring tool</b> • Not affiliated with any marketplace</div>
+        <button class="btn primary" onclick="safeBack()">Back</button>
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    function safeBack(){
+      try{
+        if (window.history.length > 1) return window.history.back();
+      }catch(e){}
+      window.location.href = "/";
+    }
+  </script>
+</body>
+</html>
