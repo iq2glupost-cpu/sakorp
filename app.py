@@ -23,32 +23,36 @@ def home():
 
 @app.route('/whitelist', methods=['POST'])
 def whitelist():
-    data = request.get_json()
-
-    email = data.get('email', '').strip().lower()
-
-    if not email or not is_valid_email(email):
-        return jsonify({
-            "success": False,
-            "message": "Invalid email address"
-        }), 400
-
     try:
-        supabase.table("waitlist").insert({
+        data = request.get_json()
+        print("DATA:", data)
+
+        email = data.get('email', '').strip().lower()
+        print("EMAIL:", email)
+
+        if not email or not is_valid_email(email):
+            return jsonify({
+                "success": False,
+                "message": "Invalid email"
+            }), 400
+
+        response = supabase.table("waitlist").insert({
             "email": email
         }).execute()
 
+        print("SUPABASE RESPONSE:", response)
+
         return jsonify({
-            "success": True,
-            "message": "Added to whitelist"
+            "success": True
         }), 200
 
     except Exception as e:
-        print("ERROR:", str(e)) # 👈 OVO JE KLJUČNO
+        print("FULL ERROR:", str(e))
         return jsonify({
             "success": False,
-            "message": "Server error"
+            "message": str(e)
         }), 500
+
 
 
 # =========================
