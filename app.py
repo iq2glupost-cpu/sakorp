@@ -24,7 +24,7 @@ def home():
     return render_template('index.html')
 
 
-@app.route("/api/waitlist", methods=["POST"])
+@app.route("/waitlist", methods=["POST"])
 def waitlist():
     data = request.json
     email = data.get("email")
