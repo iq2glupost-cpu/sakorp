@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>SAKORP Shield — Amazon Buy Box Monitoring & Forensic Logs</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+  :root{
+    --bg:#fbfbfd;
+    --text:#121216;
+    --muted:#5f6368;
+    --accent:#0071e3;
+    --accent2:#0a84ff;
+    --border:rgba(0,0,0,.10);
+    --border2:rgba(0,0,0,.06);
+    --radius:28px;
+    --shadow: 0 12px 40px rgba(0,0,0,.06);
+    --shadow2: 0 24px 90px rgba(0,0,0,.11);
+    --navH: 78px;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%; scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:'Inter',sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  .container{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  /* ===== Ambient background ===== */
+  .bg-grid{
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(to right, rgba(0,0,0,.03) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(0,0,0,.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    opacity:.14; z-index:-3;
+    mask-image: radial-gradient(closest-side at 50% 22%, black 32%, transparent 72%);
+  }
+
+  /* ===== Nav ===== */
+  nav{
+    position:fixed; top:0; left:0; right:0;
+    background: rgba(255,255,255,.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border2);
+    z-index:100;
+  }
+  .nav-inner{
+    height:var(--navH);
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+  }
+  .logo{font-weight:950; letter-spacing: 0.30em; font-size: 16px; text-transform:uppercase;}
+
+  /* buttons */
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding: 12px 16px; border-radius: 14px; font-weight: 800; font-size: 13px;
+    cursor:pointer; transition: transform .18s ease, box-shadow .18s ease;
+  }
+  .btn.primary{
+    color:#fff; background: linear-gradient(180deg, var(--accent2), var(--accent));
+    border:none; box-shadow: 0 14px 34px rgba(0,113,227,.22);
+  }
+  .btn.secondary{
+    background:#fff; border: 1px solid var(--border);
+    box-shadow: 0 10px 28px rgba(0,0,0,.06);
+  }
+  .btn.ghost{background: transparent; border:none; color: var(--muted);}
+
+  /* ===== Sections ===== */
+  section{ padding: 96px 0; }
+  .hero{ padding-top: calc(var(--navH) + 78px); text-align:center; }
+  .hero h1{ margin: 18px auto 0; font-size: clamp(42px, 5.8vw, 76px); font-weight: 950; letter-spacing: -0.050em;}
+  .hero p{ margin: 18px auto 0; max-width: 940px; color: var(--muted); font-size: 18px; line-height: 1.70; }
+
+  /* ===== Cards ===== */
+  .card-grid{ margin-top: 28px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .pCard{
+    background:#fff; border:1px solid var(--border2); border-radius: var(--radius);
+    padding: 28px; box-shadow: var(--shadow); cursor:pointer; display:block;
+  }
+  .pCard:hover{ transform: translateY(-2px); box-shadow: var(--shadow2); }
+  .pTitle{ margin: 12px 0 0; font-weight: 950; font-size: 20px; }
+  .pSub{ margin: 8px 0 0; color: var(--muted); font-size: 14px; }
+
+  /* ===== Modal (Whitelist) ===== */
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+    opacity: 0; transition: opacity 0.3s ease;
+  }
+  .modal-overlay.active { display: flex; opacity: 1; }
+  .modal-content {
+    background: #fff; padding: 40px; border-radius: 24px;
+    width: 90%; max-width: 440px; box-shadow: var(--shadow2);
+    text-align: center; position: relative;
+    transform: translateY(20px); transition: transform 0.3s ease;
+  }
+  .modal-overlay.active .modal-content { transform: translateY(0); }
+  .close-modal {
+    position: absolute; top: 16px; right: 16px; cursor: pointer;
+    font-size: 24px; color: var(--muted); border: none; background: none;
+  }
+  .modal-content h3 { margin: 0 0 10px; font-size: 24px; font-weight: 900; }
+  .modal-content p { margin: 0 0 24px; color: var(--muted); font-size: 14px; }
+  .modal-content input {
+    width: 100%; padding: 14px 16px; border-radius: 12px;
+    border: 1px solid var(--border); font-size: 16px; font-family: inherit;
+    margin-bottom: 16px; outline: none;
+  }
+  .modal-content input:focus { border-color: var(--accent); }
+  .modal-content button { width: 100%; }
+  
+  #formMessage { margin-top: 16px; font-size: 14px; font-weight: 600; display: none; }
+  .msg-success { color: #22c55e; }
+  .msg-error { color: #ef4444; }
+
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#top">SAKORP</a>
+    <div class="nav-links">
+      <a class="btn ghost" href="#pricing">Pricing</a>
+      <button class="btn secondary" onclick="openModal()">Join Whitelist</button>
+      <button class="btn primary" onclick="openModal()">Early Access</button>
+    </div>
+  </div>
+</nav>
+
+<main id="top">
+  <section class="hero">
+    <div class="container">
+      <h1>Observe Amazon Buy Box shifts early.</h1>
+      <p>SAKORP Shield monitors Amazon listing signals and records every scan in a forensic timeline. Platform is currently in closed beta.</p>
+    </div>
+  </section>
+
+  <section id="pricing">
+    <div class="container">
+      <div class="card-grid">
+        <div class="pCard" onclick="openModal()">
+          <div class="pTitle">Standard — $49.99 / month</div>
+          <div class="pSub">Click to join the waitlist for the Standard plan.</div>
+        </div>
+        <div class="pCard" onclick="openModal()">
+          <div class="pTitle">Standard ASIN — $19.99 / mo</div>
+          <div class="pSub">Click to request early access for add-ons.</div>
+        </div>
+        <div class="pCard" onclick="openModal()">
+          <div class="pTitle">Protected ASIN — $39.99 / mo</div>
+          <div class="pSub">Priority waitlist for high-frequency monitoring.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal-overlay" id="whitelistModal">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal()">&times;</button>
+    <h3>Get Early Access</h3>
+    <p>SAKORP Shield is currently in closed beta. Leave your email to join the whitelist.</p>
+    
+    <input type="email" id="emailInput" placeholder="Enter your email address" required>
+    <button class="btn primary" id="submitBtn" onclick="submitToSupabase()">Join Whitelist</button>
+    
+    <div id="formMessage"></div>
+  </div>
+</div>
+
+<script>
+  // Tvoj Supabase ključ i URL (ZAMENI OVO SA SVOJIM PODACIMA)
+  const SUPABASE_URL = 'https://TVOJ_PROJEKAT.supabase.co';
+  const SUPABASE_ANON_KEY = 'TVOJ_ANON_KEY';
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const modal = document.getElementById('whitelistModal');
+  const msgDiv = document.getElementById('formMessage');
+
+  function openModal() {
+    modal.classList.add('active');
+    msgDiv.style.display = 'none';
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+  }
+
+  // Zatvaranje na klik van modala
+  window.onclick = function(event) {
+    if (event.target == modal) { closeModal(); }
+  }
+
+  async function submitToSupabase() {
+    const email = document.getElementById('emailInput').value;
+    const btn = document.getElementById('submitBtn');
+
+    if (!email || !email.includes('@')) {
+      showMessage('Please enter a valid email.', 'error');
+      return;
+    }
+
+    btn.textContent = 'Submitting...';
+    btn.disabled = true;
+
+    // Pretpostavka: Imaš tabelu koja se zove 'whitelist' sa kolonom 'email'
+    const { data, error } = await supabase
+      .from('whitelist')
+      .insert([{ email: email }]);
+
+    if (error) {
+      showMessage('Error: ' + error.message, 'error');
+    } else {
+      showMessage('Success! You are on the list.', 'success');
+      document.getElementById('emailInput').value = '';
+    }
+
+    btn.textContent = 'Join Whitelist';
+    btn.disabled = false;
+  }
+
+  function showMessage(text, type) {
+    msgDiv.textContent = text;
+    msgDiv.className = type === 'error' ? 'msg-error' : 'msg-success';
+    msgDiv.style.display = 'block';
+  }
+</script>
+</body>
+</html>
+
