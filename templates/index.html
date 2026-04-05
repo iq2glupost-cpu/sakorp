@@ -997,16 +997,52 @@
   function closeModal() { document.getElementById('modal').classList.remove('open'); }
   function handleOverlay(e) { if (e.target === document.getElementById('modal')) closeModal(); }
 
-  function submitForm() {
-    const email = document.getElementById('emailInput').value;
+  async function submitForm() {
+    const emailInput = document.getElementById('emailInput');
+    const email = emailInput.value;
+    const submitBtn = document.querySelector('.modal-submit');
+
+    // 1. Osnovna validacija
     if (!email || !email.includes('@')) {
-      document.getElementById('emailInput').style.borderColor = '#ff3b30';
-      document.getElementById('emailInput').style.boxShadow = '0 0 0 3px rgba(255,59,48,0.1)';
+      emailInput.style.borderColor = '#ff3b30';
+      emailInput.style.boxShadow = '0 0 0 3px rgba(255,59,48,0.1)';
       return;
     }
-    document.getElementById('modalForm').classList.add('hidden');
-    document.getElementById('modalSuccess').classList.add('show');
+
+    // Onemogući dugme dok traje slanje da sprečiš duple klikove
+    submitBtn.disabled = true;
+    submitBtn.innerText = 'Sending...';
+
+    try {
+      // 2. KLJUČNI DEO: Slanje podataka na backend
+      const response = await fetch('/whitelist', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: email })
+      });
+
+      const result = await response.json();
+
+      // 3. Tek ako backend potvrdi uspeh, pokaži success modal
+      if (result.success) {
+        document.getElementById('modalForm').classList.add('hidden');
+        document.getElementById('modalSuccess').classList.add('show');
+      } else {
+        alert("Greška pri čuvanju mejla. Pokušajte ponovo.");
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Join the waitlist';
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Serverska greška. Proverite internet vezu.");
+      submitBtn.disabled = false;
+      submitBtn.innerText = 'Join the waitlist';
+    }
   }
+
+
 
   /* FAQ */
   function toggleFaq(el) {
